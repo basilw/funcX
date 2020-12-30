@@ -259,7 +259,7 @@ def start_endpoint(
     elif not endpoint_uuid:
         endpoint_uuid = str(uuid.uuid4())
 
-    logger.info(f"Starting endpoint with uuid: {endpoint_uuid}")
+    logger.info(f"asdfStarting endpoint with uuid: {endpoint_uuid}")
 
     # Create a daemon context
     stdout = open(os.path.join(endpoint_dir, './interchange.stdout'), 'w+')
@@ -283,8 +283,10 @@ def start_endpoint(
     endpoint_config = SourceFileLoader(
         'config',
         os.path.join(endpoint_dir, FUNCX_CONFIG_FILE_NAME)).load_module()
-
+    
+    logger.info("asdf2")
     with context:
+        logger.info("asdf3")
         while True:
             # Register the endpoint
             logger.debug("Registering endpoint")
@@ -467,7 +469,7 @@ def main(
     # For commands other than `init`, we ensure the existence of the config directory and file.
 
     global logger
-    funcx.set_stream_logger(level=logging.DEBUG if debug else logging.INFO)
+    funcx.set_stream_logger(level=logging.DEBUG)
     logger = logging.getLogger('funcx')
     logger.debug("Command: {}".format(ctx.invoked_subcommand))
 

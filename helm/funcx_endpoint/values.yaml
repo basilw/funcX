@@ -5,8 +5,8 @@
 replicaCount: 1
 funcXServiceAddress: https://api.funcx.org
 image:
-  repository: funcx/kube-endpoint
-  tag: dev
+  repository: funcx_kube_endpoint	
+  tag: develop
   pullPolicy: IfNotPresent
 
 workerImage: python:3.6-buster

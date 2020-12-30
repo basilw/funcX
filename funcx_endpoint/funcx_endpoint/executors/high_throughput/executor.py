@@ -17,7 +17,7 @@ from multiprocessing import Process, Queue
 # from ipyparallel.serialize import pack_apply_message  # ,unpack_apply_message
 from ipyparallel.serialize import deserialize_object  # ,serialize_object
 
-from funcx_endpoint.executors.high_throughput.messages import HeartbeatReq, EPStatusReport, Heartbeat
+from funcx.executors.high_throughput.messages import HeartbeatReq, EPStatusReport, Heartbeat
 from funcx.serialize import FuncXSerializer
 fx_serializer = FuncXSerializer()
 
@@ -30,8 +30,8 @@ from parsl.utils import RepresentationMixin
 from parsl.providers import LocalProvider
 
 
-from funcx_endpoint.executors.high_throughput import zmq_pipes
-from funcx.utils.loggers import set_file_logger
+from funcx.executors.high_throughput import zmq_pipes
+from funcx import set_file_logger
 
 logger = logging.getLogger(__name__)
 if not logger.hasHandlers():
@@ -166,7 +166,7 @@ class HighThroughputExecutor(ParslExecutor, RepresentationMixin):
                  interchange_port_range=(55000, 56000),
                  storage_access=None,
                  working_dir=None,
-                 worker_debug=False,
+                 worker_debug=True,
                  cores_per_worker=1.0,
                  max_workers=float('inf'),
                  heartbeat_threshold=120,
@@ -285,7 +285,7 @@ class HighThroughputExecutor(ParslExecutor, RepresentationMixin):
         # We do not want to start the interchange. The user will do that via starting
         # the endpoint.
         # self._start_local_interchange_process()
-        print("Attempting remote start")
+        print("asdfAttempting remote start")
         # self._start_remote_interchange_process()
 
         logger.debug("Created management thread: {}".format(self._queue_management_thread))
@@ -374,6 +374,7 @@ class HighThroughputExecutor(ParslExecutor, RepresentationMixin):
         The `None` message is a die request.
         """
         logger.debug("[MTHREAD] queue management worker starting")
+        print("[MTHREAD] queue management worker starting")
 
         while not self._executor_bad_state.is_set():
             try:
@@ -398,9 +399,11 @@ class HighThroughputExecutor(ParslExecutor, RepresentationMixin):
 
                 if msgs is None:
                     logger.debug("[MTHREAD] Got None, exiting")
+                    print("[MTHREAD] Got None, exiting")
                     return
                 elif isinstance(msgs, EPStatusReport):
                     logger.debug("[MTHREAD] Received EPStatusReport")
+                    print("[MTHREAD] Received EPStatusReport")
                     if len(msgs.task_statuses):
                         self.task_status_queue.put(msgs.task_statuses)
 
@@ -409,6 +412,7 @@ class HighThroughputExecutor(ParslExecutor, RepresentationMixin):
                             self.endpoint_db.put(self.endpoint_id, msgs.ep_status)
                     except Exception:
                         logger.error("Caught error while trying to push data into redis")
+                        print("Caught error while trying to push data into redis")
 
                 else:
                     for serialized_msg in msgs:
@@ -496,13 +500,16 @@ class HighThroughputExecutor(ParslExecutor, RepresentationMixin):
         """
         if self._queue_management_thread is None:
             logger.debug("Starting queue management thread")
+            print("Starting queue management thread")
             self._queue_management_thread = threading.Thread(target=self._queue_management_worker)
             self._queue_management_thread.daemon = True
             self._queue_management_thread.start()
             logger.debug("Started queue management thread")
+            print("Started queue management thread")
 
         else:
             logger.debug("Management thread already exists, returning")
+            print("Management thread already exists, returning")
 
     def hold_worker(self, worker_id):
         """Puts a worker on hold, preventing scheduling of additional tasks to it.

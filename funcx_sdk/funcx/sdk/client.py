@@ -37,7 +37,7 @@ class FuncXClient(throttling.ThrottledBaseClient):
     CLIENT_ID = '4cf29807-cf21-49ec-9443-ff9a3fb9f81c'
 
     def __init__(self, http_timeout=None, funcx_home=os.path.join('~', '.funcx'),
-                 force_login=False, fx_authorizer=None, funcx_service_address='https://api.funcx.org/v1',
+                 force_login=False, fx_authorizer=None, funcx_service_address='http://funcx-funcx-web-service:8000/v1',
                  **kwargs):
         """ Initialize the client
 
@@ -407,7 +407,9 @@ class FuncXClient(throttling.ThrottledBaseClient):
              'address' : <>,
              'client_ports': <>}
         """
+        logger.info("asdf4")
         self.version_check()
+        logger.info("asdf5")
 
         data = {
             "endpoint_name": name,

@@ -13,6 +13,7 @@ RUN pip install .
 
 RUN useradd -m funcx
 RUN mkdir -p /home/funcx/.kube
+RUN apt-get update && apt-get install -y nano
 USER funcx
 WORKDIR /home/funcx
 ENV HOME /home/funcx
